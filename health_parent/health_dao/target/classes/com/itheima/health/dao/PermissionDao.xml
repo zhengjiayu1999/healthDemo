@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itheima.health.dao.PermissionDao">
+    <select id="findPermissionMapById" parameterType="int" resultType="permission">
+        select p.* from t_permission p,t_role_permission rp where p.id= rp.permission_id and role_id=#{id}
+    </select>
+
+    <!--条件查询-->
+    <select id="selectByCondition" parameterType="string" resultType="com.itheima.health.pojo.Permission">
+        select * from t_permission
+        <if test="value != null and value.length > 0">
+            where name = #{value}
+        </if>
+    </select>
+
+
+    <select id="findById" parameterType="int" resultType="permission">
+        select * from t_permission where id = #{id}
+
+    </select>
+    <delete id="delete" parameterType="int">
+        delete from t_permission where id = #{id}
+    </delete>
+    <insert id="add" parameterType="permission">
+        insert into t_permission (id,name,keyword,description)
+        VALUES(#{id},#{name},#{keyword},#{description})
+    </insert>
+
+    <select id="findCountByMenuId" parameterType="int" resultType="int">
+        select count(*) from t_role_permission where permission_id =  #{id}
+    </select>
+
+    <update id="edit" parameterType="com.itheima.health.pojo.Permission">
+        update t_permission
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="keyword != null">
+                keyword = #{keyword},
+            </if>
+            <if test="description != null">
+                description = #{description},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>

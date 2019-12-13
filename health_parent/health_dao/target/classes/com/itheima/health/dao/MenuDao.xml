@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itheima.health.dao.MenuDao">
+
+    <select id="getMenu" resultType="map" parameterType="string">
+      select m.priority,m.name title,m.icon,id
+  from t_menu m,t_role_menu rm
+  where m.level = 1 and rm.menu_id=m.id
+  and role_id = (select ur.role_id from t_user u,t_user_role ur where u.`id`=ur.`user_id` and u.username = #{username})
+    </select>
+
+
+    <select id="getChildrenMenu" parameterType="string" resultType="map">
+          select path,name title,linkUrl from t_menu where level =2 and parentMenuId = #{id}
+    </select>
+
+    <!--条件查询-->
+    <select id="selectByCondition" parameterType="string" resultType="com.itheima.health.pojo.Menu">
+        select * from t_menu
+        <if test="value != null and value.length > 0">
+            where name = #{value}
+        </if>
+    </select>
+
+    <select id="findById" parameterType="int" resultType="menu">
+        select * from t_menu where id = #{id}
+
+    </select>
+    <delete id="delete" parameterType="int">
+        delete from t_menu where id = #{id}
+    </delete>
+
+    <insert id="add" parameterType="menu">
+        insert into t_menu (name,linkUrl,path,priority,description,icon,parentMenuId,level)
+         VALUES(#{menu.name},#{menu.linkUrl},#{menu.path},#{menu.priority},#{menu.description},#{menu.icon},#{menu.parentMenuId},#{level})
+    </insert>
+
+    <select id="findCountByMenuId" parameterType="int" resultType="int">
+         select count(*) from t_role_menu where menu_id = #{id}
+    </select>
+
+    <update id="edit" parameterType="com.itheima.health.pojo.Menu">
+        update t_menu
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="linkUrl != null">
+                linkUrl = #{linkUrl},
+            </if>
+            <if test="path != null">
+                path = #{path},
+            </if>
+            <if test="priority != null">
+                priority = #{priority},
+            </if>
+            <if test="description != null">
+                description = #{description},
+            </if>
+            <if test="icon != null">
+                icon = #{icon},
+            </if>
+            <if test="parentMenuId != null">
+                parentMenuId = #{parentMenuId},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itheima.health.dao.UserDao">
+
+    <resultMap id="RolesMap" type="user" >
+        <id column="id" property="id"></id>
+        <collection property="roles" column="id" select="com.itheima.health.dao.RoleDao.findRolesById"></collection>
+    </resultMap>
+    <select id="findUserByUsername" parameterType="string" resultMap="RolesMap">
+          select * from t_user where username = #{username}
+    </select>
+
+    <select id="selectByCondition" parameterType="string" resultType="user">
+        select * from t_user
+        <if test="value!=null and value.length>0">
+            <!-- code = #{value} or name like '%${value}%' or helpcode = #{value}-->
+            id = #{value} or name like concat('%',#{value},'%')
+        </if>
+    </select>
+
+    <select id="findAll" resultType="com.itheima.health.pojo.Role">
+        select * from t_role
+    </select>
+
+
+    <delete id="deleteAssociationById" parameterType="int">
+        delete from t_user_role where user_id = #{id}
+    </delete>
+
+    <insert id="setUserAndRole" parameterType="map">
+        insert into t_user_role(user_id,role_id) VALUES (#{user_id},#{role_id})
+    </insert>
+
+    <update id="update" parameterType="com.itheima.health.pojo.User">
+        update t_user
+        <set>
+            <if test="gender != null">
+                gender = #{gender},
+            </if>
+            <if test="username != null">
+                username = #{username},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+            <if test="station != null">
+                station = #{station},
+            </if>
+            <if test="telephone != null">
+                telephone = #{telephone},
+            </if>
+            <if test="password != null">
+                password = #{password},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="findById" parameterType="int" resultType="user">
+        select * from t_user where id = #{id}
+    </select>
+
+    <select id="findRoleById" parameterType="int" resultType="int">
+        select role_id from t_user_role where user_id = #{id}
+    </select>
+    <select id="findCountFromURById" parameterType="int" resultType="long">
+        select count(*) from t_user_role where user_id=#{id}
+    </select>
+
+    <delete id="delete" parameterType="int">
+        delete from t_user where id = #{id}
+    </delete>
+
+    <insert id="add" parameterType="com.itheima.health.pojo.User">
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into t_user(gender,username,password,remark,station,telephone)
+        values
+        (#{gender},#{username},#{password},#{remark},#{station},#{telephone})
+    </insert>
+</mapper>

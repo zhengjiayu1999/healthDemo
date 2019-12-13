@@ -1,0 +1,2 @@
+0:0:0:0:0:0:0:1 - - [02/Aug/2019:20:11:03 +0800] "GET /pages/main.html HTTP/1.1" 404 981 http-bio-81-exec-1 50
+0:0:0:0:0:0:0:1 - - [02/Aug/2019:20:11:03 +0800] "GET /favicon.ico HTTP/1.1" 404 973 http-bio-81-exec-3 1
